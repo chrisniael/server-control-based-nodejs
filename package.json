@@ -1,15 +1,17 @@
 {
-  "name": "rose-control-based-nodejs",
-  "version": "1.0.0",
-  "description": "Rose control tool, based on Node.JS.",
-  "main": "index.js",
+  "name": "server-control-based-nodejs",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@shenyu.me:rose-control-based-nodejs.git"
-  },
-  "author": "Shen Yu",
-  "license": "ISC"
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "morgan": "~1.8.1",
+    "pug": "~2.0.0-beta11",
+    "serve-favicon": "~2.4.2"
+  }
 }
