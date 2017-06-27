@@ -82,12 +82,11 @@ $(document).ready(function(){
 		//console.log($(this).text());
 		//console.log($(this).attr("user"));
 
-		var server_info = {"ip": $(this).attr("ip"), "user": $(this).attr("user"), "title": $(this).text()};
+		var server_info = {"zone": $(this).attr("zone"), "title": $(this).text()};
 		$.cookie("server", JSON.stringify(server_info));
 		//console.log($.cookie("server"));
 
-		$("#server-show").attr("ip", $(this).attr("ip"));
-		$("#server-show").attr("user", $(this).attr("user"));
+		$("#server-show").attr("zone", $(this).attr("zone"));
 		$("#server-show").text($(this).text());
 	});
 });

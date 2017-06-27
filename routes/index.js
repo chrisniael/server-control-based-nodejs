@@ -3,8 +3,23 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  console.log(req.cookies);
+
+  var zoneConfig = {};
+  if(req.cookies.server) {
+      var serverZoneJson = req.cookies.server;
+      var cookieServer = JSON.parse(serverZoneJson);
+      if(cookieServer.zone && cookieServer.title) {
+          zoneConfig = {
+          'id': cookieServer.zone,
+          'title': cookieServer.title
+          };
+      }
+  }
+
   res.render('index', {
       title: '服务器控制工具',
+      zone: zoneConfig,
       zones: {
           1: {
               'ip': '192.168.181.38',

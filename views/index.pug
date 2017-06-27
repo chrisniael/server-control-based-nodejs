@@ -15,12 +15,12 @@ block content
           div.panel-body
             div.btn-group
               button.btn.btn-default.dropdown-toggle(type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-                span(id="server-show") 请选择区服
+                span(id="server-show" zone=zone.id)= zone.title ? zone.title : "请选择区服"
                 span.caret
               ul.dropdown-menu
                 each val, index in zones
                   li
-                    a(zone=index) #{val.title}
+                    a.server(zone=index) #{val.title}
 
       div.col-lg-12.col-md-12
         div.panel.panel-success
