@@ -14,6 +14,7 @@ $(document).ready(function(){
             logObj.text(log + msg);
         });
         socket.on('cmd end', function(msg) {
+            $('button').button('reset');
             $('button').removeAttr('disabled');
             socket.close();
         });
@@ -21,6 +22,7 @@ $(document).ready(function(){
             var logObj = $('#log');
             var log = logObj.text();
             logObj.text(log + msg);
+            $('button').button('reset');
             $('button').removeAttr('disabled');
         });
         socket.emit('cmd', {zone: zone, action: action});
@@ -44,6 +46,8 @@ $(document).ready(function(){
 		var btnName = $(this).text();
 		$("#log").text(btnName + '\n');
 		$("button").attr("disabled", "true");
+        $(this).button('loading');
+
 		var action = $(this).attr("id");
 		console.log(action);
 

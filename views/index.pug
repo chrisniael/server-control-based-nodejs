@@ -29,7 +29,7 @@ block content
             div.row
               for val, index in actions
                 div.col-lg-4.col-md-4.col-sm-4(style="margin-top: 5px; margin-bottom: 5px;")
-                  button.action.btn(id=index, class='btn-' + val.style type="button" style="width: 100%" confirm=val.confirm)= val.title
+                  button.action.btn(id=index, class='btn-' + val.style, type="button", style="width: 100%", confirm=val.confirm, data-loading-text=val.title + "...")= val.title
 
       div.col-lg-12.col-md-12
         div.panel.panel-info
