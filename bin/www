@@ -54,7 +54,7 @@ io.on('connection', function(socket) {
                     } else {
                         var cmd = data.toString();
                         console.log(cmd);
-                        var sshCmd = `ssh -l ${user} ${ip} ${cmd}`;
+                        var sshCmd = `ssh -l ${user} ${ip} "${cmd}"`;
                         console.log(sshCmd);
 
                         var child = exec(sshCmd);
