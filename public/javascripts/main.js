@@ -2,58 +2,34 @@ $(document).ready(function(){
 	var dotNumber = 0;
 	var intervalNumber = 0;
 
-	function do_it(btn, ip, user) {
-		$.ajax({
-			url: "action.php",
-			data: {'action': btn.attr("id"), 'ip': ip, 'user': user},
-			type: "POST",
-			dataType: "json",
-			async: true,
-			success: function(data, textStatus) {
-				clearInterval(intervalNumber);
-				$("button").removeAttr("disabled");
-				var preLog = $("#log").text();
-				if(textStatus === "success")
-				{
-					//console.log(data);
-					//console.log(data.status);
-					/*if(data.status === 0)*/
-					//{
-						//$("#log").text(btn.text() + "成功");
-					//}
-					//else
-					//{
-						//$("#log").text(btn.text() + "失败");
-					/*}*/
-					$("#log").html(preLog + "<br/>" + data.output);
-					//console.log(data.output);
-				}
-				else
-				{
-					$("#log").html(preLog + "<br/>"  + "请求错误");
-				}
-			}
-		});
-
-	}
-
-	function loading(content) {
-		++dotNumber;
-		console.log("dotNumber=" + dotNumber + "content=" + content);
-		dotNumber %= 4;
-
-		var dotString = "";
-		for(var i = 0; i < dotNumber; ++i) {
-			dotString += ".";
-		}
-		$("#log").text(content + dotString);
+	function do_it(zone, action) {
+        console.log(zone, action);
+        var socket = io();
+        socket.on('cmd', function(msg) {
+            console.log(msg);
+        });
+        socket.on('cmd result', function(msg) {
+            var logObj = $('#log');
+            var log = logObj.text();
+            logObj.text(log + msg);
+        });
+        socket.on('cmd end', function(msg) {
+            $('button').removeAttr('disabled');
+            socket.close();
+        });
+        socket.on('msg error', function(msg) {
+            var logObj = $('#log');
+            var log = logObj.text();
+            logObj.text(log + msg);
+            $('button').removeAttr('disabled');
+        });
+        socket.emit('cmd', {zone: zone, action: action});
 	}
 
 	$(".action").click(function() {
-		var ip = $("#server-show").attr("ip");
-		//console.log(ip);
-		var user = $("#server-show").attr("user");
-		if(!user) {
+		var zone = $("#server-show").attr("zone");
+        console.log(zone);
+		if(!zone) {
 			alert("请选择区服");
 			return false;
 		}
@@ -66,16 +42,12 @@ $(document).ready(function(){
 		}
 
 		var btnName = $(this).text();
-		$("#log").text(btnName);
-		intervalNumber = setInterval(function() {		//匿名函数, 使setInterval能传递参数
-				loading(btnName);
-			}, 1000);
-
+		$("#log").text(btnName + '\n');
 		$("button").attr("disabled", "true");
-		action = $(this).attr("id");
-		//console.log(action);
+		var action = $(this).attr("id");
+		console.log(action);
 
-		do_it($(this), ip, user);
+		do_it(zone, action);
 	});
 
 	$(".server").click(function() {

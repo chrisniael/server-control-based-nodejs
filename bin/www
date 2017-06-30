@@ -7,6 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('server-control-based-nodejs:server');
 var http = require('http');
+var config = require('../config');
+var fs = require('fs');
+var exec = require('child_process').exec;
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +23,66 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+var io = require('socket.io')(server);
+io.on('connection', function(socket) {
+    console.log('user connected: ', socket.id);
+
+    socket.on('disconnect', function(reason) {
+        console.log('user disconnected: ' + reason);
+    });
+
+    socket.on('cmd', function(msg) {
+        console.log('message: ', msg);
+        console.log(config.zones);
+
+        var zone = msg.zone;
+        var action = msg.action;
+        if(config.zones[zone]) {
+            console.log(zone);
+            if(config.actions[action]) {
+                console.log(action);
+                io.emit('cmd', msg);
+
+                var ip = config.zones[zone].ip;
+                var user = config.zones[zone].user;
+
+                fs.readFile(`action/${action}.sh`, (err, data) => {
+                    if(err) {
+                        console.log('Read action file error.');
+                        io.emit('msg error', '操作文件读取失败！');
+                    } else {
+                        var cmd = data.toString();
+                        console.log(cmd);
+                        var sshCmd = `ssh -l ${user} ${ip} ${cmd}`;
+                        console.log(sshCmd);
+
+                        var child = exec(sshCmd);
+                        child.stdout.on('data', function(data) {
+                            console.log('stdout: ' + data);
+                            io.emit('cmd result', data);
+                        });
+                        child.stderr.on('data', function(data) {
+                            console.log('stdout: ' + data);
+                            io.emit('cmd result', data);
+                        });
+                        child.on('close', function(code) {
+                            console.log('closing code: ' + code);
+                            io.emit('cmd end', msg);
+                        });
+                    }
+                });
+            } else {
+                console.log('Action is not exist.', action);
+                io.emit('msg error', '操作不存在！');
+            }
+        } else {
+            console.log('Zone is not exist.', zone);
+            io.emit('msg error', '区服不存在！');
+        }
+
+    });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
