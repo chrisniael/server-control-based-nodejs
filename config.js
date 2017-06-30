@@ -69,7 +69,7 @@ var config = {
             'confirm': true
         },
         'build-fight-server': {
-            'title': '更新战斗服务器',
+            'title': '做个新的战斗服务器',
             'style': 'danger',
             'confirm': true
         },
